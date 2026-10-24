@@ -59,7 +59,7 @@ nav.main a.join:hover{background:var(--ddl-mint);color:#00222a}
 .status i{width:7px;height:7px;border-radius:50%;background:var(--ddl-green)}
 .hero h1{font:500 clamp(2.8rem,7vw,5.2rem)/1.04 var(--serif);letter-spacing:-.015em;color:#fff;margin-bottom:1rem;text-shadow:0 2px 30px rgba(0,0,0,.8)}
 .hero h1 em{font-style:italic;color:var(--ddl-aqua)}
-.hero p.lede{max-width:640px;font-size:clamp(1.05rem,2.2vw,1.3rem);line-height:1.55;color:#e2e8f0;text-shadow:0 1px 18px rgba(0,0,0,.9);margin-bottom:1.7rem}
+.hero p.lede{max-width:860px;font-size:clamp(1rem,1.9vw,1.2rem);line-height:1.55;color:#e2e8f0;text-shadow:0 1px 18px rgba(0,0,0,.9);margin-bottom:1.7rem}
 .hero .by{margin-top:1.4rem;font:400 .8rem var(--display);color:var(--text-muted);letter-spacing:.04em;text-shadow:0 1px 10px #000}
 .hero .by a{color:var(--ddl-light-teal);text-decoration:none}
 .btn{display:inline-flex;align-items:center;gap:.5rem;font:700 .95rem var(--display);padding:.85rem 1.6rem;border-radius:10px;text-decoration:none;cursor:pointer;transition:all .25s ease;border:1px solid var(--ddl-light-teal);white-space:nowrap}
@@ -145,6 +145,8 @@ footer.site{position:relative;z-index:10;max-width:1000px;margin:3rem auto 0;pad
 footer.site img{height:22px;width:auto;display:block;margin-bottom:.7rem}
 footer.site a{text-decoration:none}
 
+@media (min-width:0){.br-d{display:none}}
+@media (min-width:900px){.br-d{display:inline}}
 @media (max-width:760px){
   header.top{padding:.9rem 1rem;top:1.9rem}
   header.top.scrolled{padding:.7rem 1rem}
@@ -182,7 +184,7 @@ footer.site a{text-decoration:none}
 <main>
 <section class="hero" id="hero">
   <h1>Earth's <em>Last</em> Exam</h1>
-  <p class="lede">We're testing AI's ability to solve climate problems. We need your help to design the test. The best questions win up to <span class="ph">$12,000</span>.</p>
+  <p class="lede">We're testing AI's ability to solve climate problems.<br class="br-d"> We need your help to design the test. The best questions win up to <span class="ph">$12,000</span>.</p>
   <div class="cta-row">
     <a class="btn primary" href="#join">Sign up to submit a question <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
     <a class="btn ghost" href="#what">Learn more &darr;</a>
@@ -304,7 +306,7 @@ footer.site a{text-decoration:none}
   <h3 class="sub">Our previous work with AI:</h3>
   <ul class="work">
     <li><a href="https://chatnetzero.ai" target="_blank" rel="noopener">ChatNetZero</a>: an AI assistant that helps people interpret climate commitments by governments and companies and judge whether a net-zero target is credible. It draws on expert-vetted data from the Net Zero Tracker and discloses the energy used for each answer.</li>
-    <li><a href="https://datadrivenlab.org/wp-content/uploads/2026/10/DDL-Developing-and-Assessing-Credible-AI-Workflows-for-Decarbonization-Insights.pdf" target="_blank" rel="noopener">Developing and Assessing Credible AI Workflows for Decarbonization Insights</a>: a DDL learning document (October 2026) on building an AI-assisted workflow to draft 12 low-carbon sourcing playbooks and testing the output with structured expert review. AI's own quality judgments matched the final human judgments only 44% of the time, and most errors were unsupported claims and sourcing problems rather than outright fabrication.</li>
+    <li><a href="https://datadrivenlab.org/wp-content/uploads/2026/10/DDL-Developing-and-Assessing-Credible-AI-Workflows-for-Decarbonization-Insights.pdf" target="_blank" rel="noopener">Developing and Assessing Credible AI Workflows for Decarbonization Insights</a>: how we built and tested an AI-assisted workflow for corporate sourcing playbooks. Expert reviewers agreed with AI's own quality checks only 44% of the time.</li>
     <li><a href="https://data-center.apps.cloudapps.unc.edu/" target="_blank" rel="noopener">U.S. Data Center Policy Explorer</a>: an interactive map of more than 1,500 U.S. data center campuses alongside hundreds of state policy records, showing how states are regulating the industry.</li>
     <li><a href="https://datadrivenlab.org/climateAIsolutions/" target="_blank" rel="noopener">Climate AI for Cities</a>: a dashboard and database cataloging AI solutions for city climate mitigation, adaptation and energy access, each assessed on technology readiness, scale, open-source availability and institutional feasibility.</li>
     <li><a href="https://www.reportscout.app/" target="_blank" rel="noopener">Report Scout</a>: a tool that monitors investor-relations pages and official sources for corporate annual, ESG and sustainability reports and emails analysts verified updates.</li>
