@@ -90,6 +90,12 @@ h3{font:600 1rem var(--display);color:var(--ddl-ice);margin-bottom:.4rem}
 .trio p{font-size:.9rem;line-height:1.55;margin:0}
 blockquote{border-left:3px solid var(--ddl-mint);padding:.2rem 0 .2rem 1.2rem;margin:1.5rem 0 0;font:400 1.15rem/1.6 var(--serif);color:#e2e8f0}
 p.cta{margin-top:1.6rem!important}
+h3.sub{margin-top:1.8rem;font-size:1.05rem}
+ul.work{list-style:none;margin:.9rem 0 0}
+ul.work li{position:relative;padding:.7rem 0 .7rem 1.5rem;color:var(--text-body);line-height:1.6;font-size:.96rem;border-bottom:1px solid rgba(126,190,197,.12)}
+ul.work li::before{content:"";position:absolute;left:.15rem;top:1.25rem;width:.45rem;height:.45rem;border-radius:50%;background:var(--ddl-mint)}
+ul.work li:last-child{border-bottom:0}
+ul.work a{font-weight:600}
 .prize{margin:1.2rem 0 1.4rem;padding:1rem 1.2rem;border:1px solid rgba(165,255,180,.45);border-radius:14px;background:rgba(165,255,180,.07);color:var(--text-body);line-height:1.6}
 .prize b{color:var(--ddl-mint);font-family:var(--display)}
 ol.steps{list-style:none;counter-reset:s;margin-top:1.4rem}
@@ -177,7 +183,7 @@ footer.site a{text-decoration:none}
 <section class="hero" id="hero">
   <div class="status"><i></i>Pre-launch &middot; Questions open soon</div>
   <h1>Earth's <em>Last</em> Exam</h1>
-  <p class="lede">We need your help to design this test: 500 expert-level questions on the climate problems that matter most, built to find out whether AI can solve them.</p>
+  <p class="lede">We're testing AI's ability to solve climate problems. We need your help to design the test. The best questions win up to <span class="ph">$12,000</span>.</p>
   <div class="cta-row">
     <a class="btn primary" href="#join">Sign up to submit a question <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
     <a class="btn ghost" href="#what">Learn more &darr;</a>
@@ -225,6 +231,7 @@ footer.site a{text-decoration:none}
     <li><h3>Review, test and publish <span class="tag">Planned</span></h3><p>Submitted questions are reviewed by experts and tested against frontier AI models. We plan to publish the results and recognize contributors. Prizes of up to <span class="ph">$12,000</span> are planned for the best questions; details to come.</p></li>
   </ol>
   <p class="note" style="margin-top:1.6rem">The submission and review process is still being designed, so details may change.</p>
+  <p class="cta"><a class="btn primary" href="#join">Sign up to submit a question <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></p>
 </section>
 
 <section class="card" id="contribute">
@@ -295,6 +302,14 @@ footer.site a{text-decoration:none}
   <div class="kicker">07 &middot; About</div>
   <h2>An independent research initiative.</h2>
   <p>Earth's Last Exam is run by the <a href="https://datadrivenlab.org" target="_blank" rel="noopener">Data-Driven EnviroLab</a> (DDL), an interdisciplinary research collective at UNC-Chapel Hill's Institute for the Environment. DDL's mission is to turn complex environmental data into real-world solutions.</p>
+  <h3 class="sub">Our previous work with AI:</h3>
+  <ul class="work">
+    <li><a href="https://chatnetzero.ai" target="_blank" rel="noopener">ChatNetZero</a>: an AI assistant that helps people interpret climate commitments by governments and companies and judge whether a net-zero target is credible. It draws on expert-vetted data from the Net Zero Tracker and discloses the energy used for each answer.</li>
+    <li><a href="https://datadrivenlab.org/wp-content/uploads/2026/10/DDL-Developing-and-Assessing-Credible-AI-Workflows-for-Decarbonization-Insights.pdf" target="_blank" rel="noopener">Developing and Assessing Credible AI Workflows for Decarbonization Insights</a>: a DDL paper on how to build AI workflows for decarbonization analysis and how to test whether their outputs can be trusted.</li>
+    <li><a href="https://data-center.apps.cloudapps.unc.edu/" target="_blank" rel="noopener">U.S. Data Center Policy Explorer</a>: an interactive map of more than 1,500 U.S. data center campuses alongside hundreds of state policy records, showing how states are regulating the industry.</li>
+    <li><a href="https://datadrivenlab.org/climateAIsolutions/" target="_blank" rel="noopener">Climate AI for Cities</a>: a dashboard and database cataloging AI solutions for city climate mitigation, adaptation and energy access, each assessed on technology readiness, scale, open-source availability and institutional feasibility.</li>
+    <li><a href="https://www.reportscout.app/" target="_blank" rel="noopener">Report Scout</a>: a tool that monitors investor-relations pages and official sources for corporate annual, ESG and sustainability reports and emails analysts verified updates.</li>
+  </ul>
 </section>
 
 </div>
