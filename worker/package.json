@@ -1,0 +1,7 @@
+{
+  "name": "ele-signups",
+  "private": true,
+  "type": "module",
+  "scripts": { "deploy": "cf deploy" },
+  "devDependencies": { "wrangler": "^4.0.0" }
+}

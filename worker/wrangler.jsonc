@@ -1,0 +1,12 @@
+{
+  "name": "ele-signups",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "d1_databases": [
+    { "binding": "DB", "database_name": "ele-signups", "database_id": "2e45ebf4-c247-44b7-a764-b2c9f7f681b8" }
+  ],
+  "vars": {
+    "ALLOWED_ORIGINS": "https://www.shivarajbhandari.com,https://shivarajbhandari.com,http://127.0.0.1:8911"
+  }
+}

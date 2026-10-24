@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Earth's Last Exam | Data-Driven EnviroLab</title>
+<meta name="description" content="Earth's Last Exam is a benchmark of 500 expert-written questions testing whether AI can solve complex climate and environmental problems. A research initiative of the Data-Driven EnviroLab at UNC-Chapel Hill." />
+<!-- PROTOTYPE: remove this robots tag when this becomes the real site -->
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#000000" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ddl-dark-bg:#000000;--ddl-deep-teal:#004351;--ddl-teal:#166A7C;--ddl-light-teal:#7EBEC5;
+  --ddl-aqua:#92D2D2;--ddl-ice:#EAFFFF;--ddl-mint:#A5FFB4;--ddl-green:#7cc68d;--ddl-sky:#2EA3F2;
+  --card-bg:rgba(0,28,35,0.9);--card-border:rgba(126,190,197,0.26);
+  --text-main:#f1f5f9;--text-body:#cbd5e1;--text-muted:#94a3b8;
+  --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --display:'Space Grotesk',sans-serif;
+}
+html{scroll-behavior:smooth;scroll-padding-top:5rem}
+body,html{width:100%;min-height:100%;background:var(--ddl-dark-bg);color:var(--text-main);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+a{color:var(--ddl-light-teal)}
+a:hover{color:var(--ddl-mint)}
+:focus-visible{outline:2px solid var(--ddl-mint);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:0;background:var(--ddl-mint);color:#00222a;padding:.6rem 1rem;z-index:100;font-weight:600}
+.skip:focus{left:1rem;top:1rem}
+
+/* globe */
+#canvas-container{position:fixed;inset:0;z-index:1;cursor:grab;transition:opacity .4s linear}
+#canvas-container:active{cursor:grabbing}
+.vignette{position:fixed;inset:0;background:radial-gradient(circle at 50% 38%,transparent 30%,rgba(0,0,0,.9) 100%);pointer-events:none;z-index:2}
+
+/* prototype ribbon */
+.proto{position:relative;z-index:60;background:#1b1b1b;color:#e8e8e8;font:500 .74rem var(--display);letter-spacing:.04em;text-align:center;padding:.4rem 1rem;border-bottom:1px solid rgba(255,255,255,.12)}
+.proto b{color:var(--ddl-mint);font-weight:600}
+
+/* header */
+header.top{position:fixed;top:1.9rem;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:1.1rem 2rem;gap:1rem;transition:background .3s,backdrop-filter .3s,top .3s}
+header.top.scrolled{top:0;background:rgba(0,12,16,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(126,190,197,.16);max-width:none;padding:.8rem max(2rem,calc((100vw - 1200px)/2 + 2rem))}
+.ddl-badge{display:inline-flex;align-items:center;gap:.6rem;background:rgba(0,67,81,.65);border:1px solid var(--ddl-light-teal);padding:.35rem .85rem;border-radius:9999px;font:600 .82rem var(--display);color:var(--ddl-ice);text-decoration:none;backdrop-filter:blur(10px);transition:all .2s}
+.ddl-badge:hover{background:rgba(22,106,124,.85);border-color:var(--ddl-mint);color:var(--ddl-ice)}
+.ddl-badge i{width:8px;height:8px;border-radius:50%;background:var(--ddl-mint);box-shadow:0 0 8px var(--ddl-mint)}
+nav.main{display:flex;align-items:center;gap:1.6rem}
+nav.main a{font:500 .85rem var(--display);color:var(--ddl-ice);text-decoration:none;opacity:.8;letter-spacing:.02em}
+nav.main a:hover{opacity:1;color:var(--ddl-mint)}
+nav.main a.join{opacity:1;border:1px solid var(--ddl-mint);color:var(--ddl-mint);padding:.4rem 1rem;border-radius:9999px}
+nav.main a.join:hover{background:var(--ddl-mint);color:#00222a}
+
+/* hero */
+.hero{position:relative;z-index:10;min-height:calc(100vh - 1.9rem);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:0 1.5rem 3rem}
+.status{display:inline-flex;align-items:center;gap:.55rem;background:rgba(126,190,197,.12);border:1px solid rgba(126,190,197,.35);padding:.35rem 1rem;border-radius:9999px;font:500 .72rem var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--ddl-ice);margin-bottom:1.2rem}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--ddl-green)}
+.hero h1{font:500 clamp(2.8rem,7vw,5.2rem)/1.04 var(--serif);letter-spacing:-.015em;color:#fff;margin-bottom:1rem;text-shadow:0 2px 30px rgba(0,0,0,.8)}
+.hero h1 em{font-style:italic;color:var(--ddl-aqua)}
+.hero p.lede{max-width:640px;font-size:clamp(1.05rem,2.2vw,1.3rem);line-height:1.55;color:#e2e8f0;text-shadow:0 1px 18px rgba(0,0,0,.9);margin-bottom:1.7rem}
+.hero .by{margin-top:1.4rem;font:400 .8rem var(--display);color:var(--text-muted);letter-spacing:.04em;text-shadow:0 1px 10px #000}
+.hero .by a{color:var(--ddl-light-teal);text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:.5rem;font:700 .95rem var(--display);padding:.85rem 1.6rem;border-radius:10px;text-decoration:none;cursor:pointer;transition:all .25s ease;border:1px solid var(--ddl-light-teal);white-space:nowrap}
+.btn.primary{background:linear-gradient(135deg,var(--ddl-teal),var(--ddl-deep-teal));color:#fff}
+.btn.primary:hover{background:linear-gradient(135deg,var(--ddl-light-teal),var(--ddl-teal));color:#00222a;transform:translateY(-1px)}
+.btn.ghost{background:rgba(0,0,0,.45);color:var(--ddl-ice);border-color:rgba(126,190,197,.4);backdrop-filter:blur(8px)}
+.btn.ghost:hover{border-color:var(--ddl-mint);color:var(--ddl-mint)}
+.btn[disabled]{opacity:.65;cursor:default;transform:none}
+.cta-row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+.hint{position:absolute;bottom:1rem;right:1.5rem;font:400 .74rem var(--display);color:var(--text-muted);display:flex;gap:.4rem;align-items:center}
+
+/* content */
+.content{position:relative;z-index:10;padding:2rem 1.25rem 0}
+section.card{max-width:820px;margin:0 auto 2rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:3rem 3rem;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 24px 70px rgba(0,0,0,.85);opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+section.card.in{opacity:1;transform:none}
+.kicker{font:600 .74rem var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--ddl-aqua);margin-bottom:.9rem}
+h2{font:500 clamp(1.8rem,3.6vw,2.5rem)/1.15 var(--serif);color:#fff;margin-bottom:1.1rem;letter-spacing:-.01em}
+h3{font:600 1rem var(--display);color:var(--ddl-ice);margin-bottom:.4rem}
+.card p{font-size:1.02rem;line-height:1.7;color:var(--text-body);margin-bottom:1rem}
+.card p:last-child{margin-bottom:0}
+.card p.big{font:400 1.3rem/1.5 var(--serif);color:#f1f5f9}
+.card p.note{font-size:.84rem;color:var(--text-muted);font-style:italic}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.8rem;padding-top:1.6rem;border-top:1px solid rgba(126,190,197,.18)}
+.stat b{display:block;font:500 2.1rem/1 var(--serif);color:var(--ddl-mint);margin-bottom:.35rem}
+.stat span{font-size:.84rem;color:var(--text-muted);line-height:1.4;display:block}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
+.trio div{background:rgba(126,190,197,.07);border:1px solid rgba(126,190,197,.2);border-radius:14px;padding:1.2rem}
+.trio p{font-size:.9rem;line-height:1.55;margin:0}
+blockquote{border-left:3px solid var(--ddl-mint);padding:.2rem 0 .2rem 1.2rem;margin:1.5rem 0 0;font:400 1.15rem/1.6 var(--serif);color:#e2e8f0}
+ol.steps{list-style:none;counter-reset:s;margin-top:1.4rem}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 1.5rem 3.4rem;border-left:1px solid rgba(126,190,197,.28);margin-left:1.05rem}
+ol.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps li::before{content:counter(s);position:absolute;left:-1.1rem;top:-.1rem;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--ddl-deep-teal);border:1px solid var(--ddl-light-teal);display:grid;place-items:center;font:600 .9rem var(--display);color:var(--ddl-ice)}
+ol.steps li.now::before{background:var(--ddl-mint);color:#00222a;border-color:var(--ddl-mint)}
+ol.steps p{font-size:.95rem;margin:0}
+.tag{display:inline-block;font:600 .66rem var(--display);letter-spacing:.1em;text-transform:uppercase;padding:.15rem .55rem;border-radius:9999px;margin-left:.5rem;vertical-align:middle;border:1px solid rgba(126,190,197,.4);color:var(--ddl-aqua)}
+.tag.now{border-color:var(--ddl-mint);color:var(--ddl-mint)}
+.ph{background:rgba(252,185,0,.14);border:1px dashed rgba(252,185,0,.6);color:#fcd34d;padding:0 .35rem;border-radius:4px;font-style:normal}
+ul.checks{list-style:none;margin:1rem 0}
+ul.checks li{position:relative;padding:.55rem 0 .55rem 1.9rem;color:var(--text-body);line-height:1.6;border-bottom:1px solid rgba(126,190,197,.12)}
+ul.checks li::before{content:"";position:absolute;left:.2rem;top:1.05rem;width:.75rem;height:.4rem;border-left:2px solid var(--ddl-mint);border-bottom:2px solid var(--ddl-mint);transform:rotate(-45deg)}
+ul.checks b{color:#fff;font-weight:600}
+.who{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 1.2rem}
+.who span{font:500 .82rem var(--display);padding:.35rem .85rem;border-radius:9999px;border:1px solid rgba(126,190,197,.3);color:var(--ddl-ice);background:rgba(126,190,197,.07)}
+
+/* form */
+#join{border-color:rgba(165,255,180,.4);box-shadow:0 24px 70px rgba(0,0,0,.85),0 0 40px rgba(165,255,180,.08)}
+form.signup{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.4rem}
+.field{display:flex;flex-direction:column;gap:.4rem}
+.field.full{grid-column:1/-1}
+label{font:600 .8rem var(--display);color:var(--ddl-aqua);letter-spacing:.03em}
+label small{font-weight:400;color:var(--text-muted)}
+input,select{width:100%;background:rgba(0,25,32,.95);border:1px solid var(--ddl-teal);border-radius:10px;padding:.8rem 1rem;color:#fff;font:400 1rem var(--sans);outline:none;transition:border-color .2s,box-shadow .2s}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%237EBEC5' stroke-width='2'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.4rem}
+input::placeholder{color:#64748b}
+input:focus,select:focus{border-color:var(--ddl-light-teal);box-shadow:0 0 0 3px rgba(126,190,197,.25)}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+.form-foot{grid-column:1/-1;display:flex;flex-direction:column;gap:.8rem;align-items:flex-start}
+.fine{font-size:.8rem!important;color:var(--text-muted)!important;line-height:1.5!important}
+.msg{min-height:1.4rem;font-size:.92rem}
+.msg.ok{color:var(--ddl-mint)}
+.msg.err{color:#f87171}
+
+/* faq */
+details{border-bottom:1px solid rgba(126,190,197,.18);padding:1rem 0}
+details:first-of-type{border-top:1px solid rgba(126,190,197,.18);margin-top:1.2rem}
+summary{cursor:pointer;list-style:none;font:600 1rem var(--display);color:var(--ddl-ice);display:flex;justify-content:space-between;gap:1rem;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:400 1.5rem/1 var(--display);color:var(--ddl-light-teal);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:.8rem 0 0!important;font-size:.97rem!important}
+
+footer.site{position:relative;z-index:10;max-width:1000px;margin:3rem auto 0;padding:2.2rem 1.5rem 2rem;border-top:1px solid rgba(126,190,197,.18);display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:center;font-size:.84rem;color:var(--text-muted)}
+footer.site img{height:22px;width:auto;display:block;margin-bottom:.7rem}
+footer.site a{text-decoration:none}
+
+@media (max-width:760px){
+  header.top{padding:.9rem 1rem;top:1.9rem}
+  header.top.scrolled{padding:.7rem 1rem}
+  nav.main a:not(.join){display:none}
+  section.card{padding:2rem 1.4rem;border-radius:20px}
+  .stats,.trio{grid-template-columns:1fr}
+  form.signup{grid-template-columns:1fr}
+  .hint{display:none}
+  .hero{padding-bottom:2rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  section.card{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#what">Skip to content</a>
+<div id="canvas-container" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="proto" data-prototype-banner><b>Design prototype</b> &middot; not the live site &middot; text and dates are placeholders for review</div>
+
+<header class="top" id="top">
+  <a href="https://datadrivenlab.org" target="_blank" rel="noopener" class="ddl-badge"><i></i><span>Data-Driven EnviroLab</span></a>
+  <nav class="main" aria-label="Primary">
+    <a href="#what">The Exam</a>
+    <a href="#why">Why it matters</a>
+    <a href="#how">How it works</a>
+    <a href="#faq">FAQ</a>
+    <a href="#join" class="join">Join</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="hero">
+  <div class="status"><i></i>Pre-launch &middot; Questions open soon</div>
+  <h1>Earth's <em>Last</em> Exam</h1>
+  <p class="lede">500 expert-written questions to find out whether AI can solve the climate and environmental problems that matter most.</p>
+  <div class="cta-row">
+    <a class="btn primary" href="#join">Join the contributor list <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    <a class="btn ghost" href="#what">Learn more &darr;</a>
+  </div>
+  <p class="by">A research initiative of the <a href="https://datadrivenlab.org" target="_blank" rel="noopener">Data-Driven EnviroLab</a> &middot; UNC-Chapel Hill</p>
+  <div class="hint" aria-hidden="true">&#10022; Drag Earth to rotate &middot; Scroll to zoom</div>
+</section>
+
+<div class="content">
+
+<section class="card" id="what">
+  <div class="kicker">01 &middot; The Exam</div>
+  <h2>A benchmark built by climate experts, to test AI.</h2>
+  <p class="big">Earth's Last Exam asks one question: can today's most capable AI models actually solve complex climate and environmental problems?</p>
+  <p>Inspired by <a href="https://lastexam.ai" target="_blank" rel="noopener">Humanity's Last Exam</a>, it narrows the focus from general academic knowledge to the science, impacts, mitigation, adaptation and policy questions that climate researchers and decision-makers work on every day.</p>
+  <p>We are collecting about 500 closed-ended questions from experts. Each has a single verifiable answer, and each is designed to be hard enough to stump frontier AI.</p>
+  <div class="stats">
+    <div class="stat"><b>500</b><span>questions targeted</span></div>
+    <div class="stat"><b>1</b><span>verifiable answer per question</span></div>
+    <div class="stat"><b>Expert</b><span>written by climate and environmental specialists</span></div>
+  </div>
+</section>
+
+<section class="card" id="why">
+  <div class="kicker">02 &middot; Why it matters</div>
+  <h2>You don't have to like AI to care how well it performs.</h2>
+  <p>AI tools are already answering public questions about climate change, and they are being considered for drafting mitigation and adaptation plans and supporting international negotiations. Whether that helps or harms depends on something few people have measured rigorously: where does AI get environmental science right, and where does it fail?</p>
+  <div class="trio">
+    <div><h3>Science communication</h3><p>Chatbots increasingly field public questions about climate. A confident error can travel faster than the correction.</p></div>
+    <div><h3>Planning and policy</h3><p>Governments and advisers are exploring AI to help design and carry out mitigation and adaptation plans. Decisions on emissions, infrastructure and risk need evidence of reliability.</p></div>
+    <div><h3>Global negotiations</h3><p>As AI enters the preparation and analysis around climate talks, a subtle error in a number or a treaty can carry real consequences.</p></div>
+  </div>
+  <p>A credible test has to come from the people who know where the hard problems are. That includes skeptics: your questions are how we find the limits of AI, and how we show where human expertise remains essential.</p>
+  <blockquote>If AI is going to inform climate decisions, it should first have to pass a test written by the people who understand the problem.</blockquote>
+</section>
+
+<section class="card" id="how">
+  <div class="kicker">03 &middot; How it works</div>
+  <h2>From sign-up to published results.</h2>
+  <ol class="steps">
+    <li class="now"><h3>Join the list <span class="tag now">Open now</span></h3><p>Tell us your name, affiliation and area of expertise. There is no commitment, and you do not need to submit anything yet.</p></li>
+    <li><h3>Start drafting</h3><p>Think of problems in your field that take real expertise to solve and have a clear right answer. We will send guidelines before submissions open.</p></li>
+    <li><h3>Submit your questions <span class="tag">Opens <span class="ph">[launch date TBD]</span></span></h3><p>When the submission form goes live, everyone on the list is notified first.</p></li>
+    <li><h3>Review, test and publish <span class="tag">Planned</span></h3><p>Submitted questions are reviewed by experts and tested against frontier AI models. We plan to publish the results and recognize contributors. Prizes will go to top contributions and discoveries; details to come.</p></li>
+  </ol>
+  <p class="note" style="margin-top:1.6rem">The submission and review process is still being designed, so details may change.</p>
+</section>
+
+<section class="card" id="contribute">
+  <div class="kicker">04 &middot; Contribute</div>
+  <h2>Who we're looking for, and what makes a good question.</h2>
+  <p>We welcome anyone with real expertise in climate or the environment, from graduate students to senior practitioners.</p>
+  <div class="who" aria-label="Fields of expertise">
+    <span>Climate &amp; atmospheric science</span><span>Ecology &amp; biodiversity</span><span>Hydrology &amp; oceans</span><span>Energy &amp; mitigation</span><span>Adaptation &amp; resilience</span><span>Economics</span><span>Policy &amp; governance</span><span>International negotiations</span><span>Public health</span><span>Agriculture &amp; food</span><span>Data &amp; remote sensing</span>
+  </div>
+  <p>You can begin thinking now. A strong question is:</p>
+  <ul class="checks">
+    <li><b>Closed-ended.</b> One verifiable answer, such as a number, a term or a choice.</li>
+    <li><b>Expert-level.</b> It takes real reasoning in your field, not a quick web search.</li>
+    <li><b>Unambiguous.</b> It does not hinge on opinion or contested value judgments.</li>
+    <li><b>Grounded.</b> It reflects a real problem in climate science, impacts, mitigation, adaptation or policy.</li>
+  </ul>
+  <p class="note">Preliminary guidance. Formal criteria will be published when submissions open.</p>
+</section>
+
+<section class="card" id="join">
+  <div class="kicker">05 &middot; Join</div>
+  <h2>Be the first to know when submissions open.</h2>
+  <p>Join the contributor list and we will email you when the question submission form goes live. Prepare your questions now and send them when it opens.</p>
+  <form class="signup" id="signup-form" novalidate>
+    <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" placeholder="Dr. Jane Doe" /></div>
+    <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@institution.edu" /></div>
+    <div class="field"><label for="f-aff">Affiliation</label><input id="f-aff" name="affiliation" type="text" autocomplete="organization" required maxlength="200" placeholder="University, agency, organization" /></div>
+    <div class="field"><label for="f-exp">Area of expertise</label>
+      <select id="f-exp" name="expertise" required>
+        <option value="" selected disabled>Select your closest field</option>
+        <option>Climate &amp; atmospheric science</option>
+        <option>Ecology &amp; biodiversity</option>
+        <option>Hydrology, oceans &amp; cryosphere</option>
+        <option>Energy systems &amp; mitigation</option>
+        <option>Adaptation &amp; resilience</option>
+        <option>Economics &amp; finance</option>
+        <option>Policy, law &amp; governance</option>
+        <option>International negotiations</option>
+        <option>Public health</option>
+        <option>Agriculture, land use &amp; food</option>
+        <option>Data science &amp; remote sensing</option>
+        <option>Other</option>
+      </select></div>
+    <div class="field full" id="other-wrap" hidden><label for="f-other">Your field <small>(optional)</small></label><input id="f-other" name="expertise_other" type="text" maxlength="120" placeholder="Describe your area of expertise" /></div>
+    <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+    <div class="form-foot">
+      <button class="btn primary" type="submit" id="submit-btn">Join the list</button>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+      <p class="fine">We will use your details only to email you about Earth's Last Exam and to understand the expertise in our community. <span class="ph">[Privacy wording to be confirmed by DDL]</span></p>
+    </div>
+  </form>
+</section>
+
+<section class="card" id="faq">
+  <div class="kicker">06 &middot; FAQ</div>
+  <h2>Common questions.</h2>
+  <details><summary>Who can contribute?</summary><p>Anyone with domain expertise in climate science, environmental science, economics, policy or a related field. Eligibility details will be finalized before submissions open.</p></details>
+  <details><summary>How is this different from Humanity's Last Exam?</summary><p>Humanity's Last Exam tests broad academic knowledge across many fields. Earth's Last Exam focuses on complex problems related to climate change, with questions drawn from the work scientists, planners and policymakers actually do.</p></details>
+  <details><summary>I'm skeptical of AI. Why should I take part?</summary><p>Because rigorous, expert-led testing is how we learn where AI can and cannot be trusted. Skeptical experts are exactly who we need: you know where the hard problems are.</p></details>
+  <details><summary>Will contributors be credited?</summary><p>We plan to recognize contributors. Details on credit and prizes will be announced with the submission guidelines.</p></details>
+  <details><summary>When do submissions open?</summary><p><span class="ph">[Launch date TBD]</span>. Join the list and you will be notified the moment the form goes live.</p></details>
+  <details><summary>What happens to my information?</summary><p>We use it to contact you about Earth's Last Exam and to understand who is in our community. <span class="ph">[Final privacy wording to be confirmed by DDL]</span></p></details>
+</section>
+
+<section class="card" id="about">
+  <div class="kicker">07 &middot; About</div>
+  <h2>An independent research initiative.</h2>
+  <p>Earth's Last Exam is run by the <a href="https://datadrivenlab.org" target="_blank" rel="noopener">Data-Driven EnviroLab</a> (DDL), an interdisciplinary research collective at UNC-Chapel Hill's Institute for the Environment. DDL's mission is to turn complex environmental data into real-world solutions.</p>
+  <p><a class="btn ghost" href="https://datadrivenlab.org" target="_blank" rel="noopener">Visit datadrivenlab.org &rarr;</a></p>
+</section>
+
+</div>
+</main>
+
+<footer class="site">
+  <div>
+    <img src="assets/ddl-wordmark.png" alt="Data-Driven EnviroLab" />
+    &copy; 2026 Data-Driven EnviroLab &middot; Institute for the Environment, UNC-Chapel Hill
+  </div>
+  <div><a href="https://datadrivenlab.org" target="_blank" rel="noopener">datadrivenlab.org</a></div>
+</footer>
+
+<script>
+/* ===== config ===== */
+// Where the sign-up form posts (the Cloudflare Worker in worker/).
+const SIGNUP_ENDPOINT = "https://ele-signups.shiva-a-rajbhandari.workers.dev/api/signup";
+
+/* ===== header + reveal ===== */
+const header = document.getElementById('top');
+const canvasBox = document.getElementById('canvas-container');
+function onScroll(){
+  const y = window.scrollY || 0, h = window.innerHeight || 800;
+  header.classList.toggle('scrolled', y > 40);
+  // dim the globe as text cards scroll over it
+  canvasBox.style.opacity = String(Math.max(0.28, 1 - y / (h * 0.9)));
+  scrollProgress = Math.min(1, Math.max(0, y / (h * 0.8)));
+}
+let scrollProgress = 0;
+window.addEventListener('scroll', onScroll, {passive:true});
+const io = new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:0.08});
+document.querySelectorAll('section.card').forEach(s=>io.observe(s));
+
+/* ===== sign-up form ===== */
+const form = document.getElementById('signup-form');
+const msg = document.getElementById('msg');
+const btn = document.getElementById('submit-btn');
+const exp = document.getElementById('f-exp');
+const otherWrap = document.getElementById('other-wrap');
+exp.addEventListener('change', ()=>{ otherWrap.hidden = exp.value !== 'Other'; });
+form.addEventListener('submit', async (ev)=>{
+  ev.preventDefault();
+  msg.className = 'msg'; msg.textContent = '';
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  for (const k of ['name','email','affiliation','expertise']) {
+    if (!String(data[k]||'').trim()) { msg.className='msg err'; msg.textContent='Please fill in every required field.'; return; }
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) { msg.className='msg err'; msg.textContent='That email address does not look right.'; return; }
+  btn.disabled = true; btn.textContent = 'Joining...';
+  try {
+    const res = await fetch(SIGNUP_ENDPOINT, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)});
+    const out = await res.json().catch(()=>({}));
+    if (res.ok && out.success) {
+      msg.className='msg ok'; msg.textContent = '✓ ' + (out.message || "You're on the list. We'll email you when submissions open.");
+      form.reset(); otherWrap.hidden = true; btn.textContent = "You're on the list";
+    } else {
+      throw new Error(out.error || 'Something went wrong. Please try again.');
+    }
+  } catch (e) {
+    msg.className='msg err';
+    msg.textContent = (e instanceof TypeError || String(SIGNUP_ENDPOINT).startsWith('REPLACE')) ? 'We could not reach the sign-up service. Please try again later.' : e.message;
+    btn.disabled = false; btn.textContent = 'Join the list';
+  }
+});
+
+/* ===== globe (same approach as the current site) ===== */
+let scene, camera, renderer, earthGroup, earthMesh, cloudMesh, starField, isLoaded = false, introProgress = 0, isDragging = false, mouseX = 0, mouseY = 0;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+try {
+  const container = canvasBox;
+  scene = new THREE.Scene();
+  const portrait = () => window.innerWidth < window.innerHeight;
+  const startZ = 6.8, targetZ = () => portrait() ? 4.1 : 3.2;
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.z = startZ;
+  renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.25;
+  const el = renderer.domElement; el.style.opacity='0'; el.style.transition='opacity .8s ease-out'; container.appendChild(el);
+  earthGroup = new THREE.Group(); earthGroup.rotation.z = 23.4*Math.PI/180; earthGroup.scale.set(.6,.6,.6); scene.add(earthGroup);
+  const show = ()=>{ isLoaded = true; el.style.opacity='1'; };
+  const manager = new THREE.LoadingManager(); manager.onLoad = show; setTimeout(()=>{ if(!isLoaded) show(); }, 3500);
+  const tl = new THREE.TextureLoader(manager); tl.crossOrigin='anonymous';
+  const B = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/';
+  earthMesh = new THREE.Mesh(new THREE.SphereGeometry(1,96,96), new THREE.MeshPhongMaterial({
+    map: tl.load(B+'earth_atmos_2048.jpg'), normalMap: tl.load(B+'earth_normal_2048.jpg'), normalScale: new THREE.Vector2(.85,.85),
+    specularMap: tl.load(B+'earth_specular_2048.jpg'), specular: new THREE.Color(0x224455), shininess: 25 }));
+  earthGroup.add(earthMesh);
+  cloudMesh = new THREE.Mesh(new THREE.SphereGeometry(1.02,96,96), new THREE.MeshStandardMaterial({
+    map: tl.load(B+'earth_clouds_2048.png'), transparent:true, opacity:.8, blending:THREE.AdditiveBlending, depthWrite:false }));
+  earthGroup.add(cloudMesh);
+  earthGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.15,64,64), new THREE.ShaderMaterial({
+    vertexShader:'varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+    fragmentShader:'varying vec3 vNormal;void main(){float i=pow(0.65-dot(vNormal,vec3(0.0,0.0,1.0)),2.8);gl_FragColor=vec4(vec3(0.22,0.65,0.95),i*0.95);}',
+    blending:THREE.AdditiveBlending, side:THREE.BackSide, transparent:true, depthWrite:false })));
+  const sun = new THREE.DirectionalLight(0xffffff,1.6); sun.position.set(5,3,5); scene.add(sun);
+  scene.add(new THREE.AmbientLight(0x020a14,.4));
+  const rim = new THREE.DirectionalLight(0x7EBEC5,.45); rim.position.set(-4,-2,-3); scene.add(rim);
+  const N = 2500, sp = new Float32Array(N*3), sc = new Float32Array(N*3);
+  for (let i=0;i<N*3;i+=3){ const r=50+Math.random()*80, t=Math.random()*Math.PI*2, p=Math.acos(Math.random()*2-1);
+    sp[i]=r*Math.sin(p)*Math.cos(t); sp[i+1]=r*Math.sin(p)*Math.sin(t); sp[i+2]=r*Math.cos(p);
+    const k=Math.random(); const c = k>.75?[.6,.85,1]:k>.4?[1,.95,.8]:[1,1,1]; sc[i]=c[0]; sc[i+1]=c[1]; sc[i+2]=c[2]; }
+  const sg = new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.BufferAttribute(sp,3)); sg.setAttribute('color',new THREE.BufferAttribute(sc,3));
+  starField = new THREE.Points(sg,new THREE.PointsMaterial({size:.9,vertexColors:true,transparent:true,opacity:.85})); scene.add(starField);
+
+  let px=0, py=0;
+  window.addEventListener('mousemove',e=>{ mouseX=e.clientX/innerWidth*2-1; mouseY=-(e.clientY/innerHeight)*2+1;
+    if(isDragging){ earthGroup.rotation.y+=(e.clientX-px)*.005; earthGroup.rotation.x+=(e.clientY-py)*.005; px=e.clientX; py=e.clientY; } });
+  el.addEventListener('mousedown',e=>{ isDragging=true; px=e.clientX; py=e.clientY; });
+  window.addEventListener('mouseup',()=>{ isDragging=false; });
+  el.addEventListener('touchstart',e=>{ if(e.touches.length===1){ isDragging=true; px=e.touches[0].clientX; py=e.touches[0].clientY; } },{passive:true});
+  window.addEventListener('touchmove',e=>{ if(isDragging&&e.touches.length===1){ earthGroup.rotation.y+=(e.touches[0].clientX-px)*.006; earthGroup.rotation.x+=(e.touches[0].clientY-py)*.006; px=e.touches[0].clientX; py=e.touches[0].clientY; } },{passive:true});
+  window.addEventListener('touchend',()=>{ isDragging=false; });
+  window.addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+
+  const clock = new THREE.Clock();
+  (function animate(){
+    requestAnimationFrame(animate);
+    const d = clock.getDelta();
+    if(!isDragging && !reduceMotion){ earthMesh.rotation.y += .08*d; cloudMesh.rotation.y += .11*d; }
+    if(isLoaded && introProgress<1) introProgress = Math.min(1, introProgress + d*.7);
+    const e = 1-Math.pow(1-introProgress,3);
+    const baseZ = startZ + (targetZ()-startZ)*e, s = .6+.4*e;
+    earthGroup.scale.set(s,s,s);
+    // sit the globe in the upper part of the screen so the headline has room beneath it
+    const yOff = portrait() ? .55 : .5;
+    earthGroup.position.y += ((yOff + scrollProgress*.5) - earthGroup.position.y) * .08;
+    camera.position.x += (mouseX*.22 - camera.position.x)*.04;
+    camera.position.y += (mouseY*.18 - camera.position.y)*.04;
+    camera.position.z += (baseZ + scrollProgress*.3 - camera.position.z)*.08;
+    camera.lookAt(0,0,0);
+    starField.rotation.y += .012*d;
+    renderer.render(scene,camera);
+  })();
+} catch (err) {
+  // no WebGL: the page still reads fine on the dark background
+  canvasBox.style.background = 'radial-gradient(circle at 50% 30%, #004351 0%, #000 70%)';
+}
+onScroll();
+</script>
+</body>
+</html>
