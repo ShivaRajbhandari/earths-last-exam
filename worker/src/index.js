@@ -68,7 +68,7 @@ async function handleSignup(request, env) {
   const affiliation = clean(body.affiliation, 200);
   let expertise = clean(body.expertise, 80);
   const expertiseOther = clean(body.expertise_other, 120);
-  if (!name || !email || !affiliation || !expertise) return json({ success: false, error: 'Please fill in every required field.' }, 400, cors);
+  if (!name || !email) return json({ success: false, error: 'Please enter your name and email.' }, 400, cors);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ success: false, error: 'That email address does not look right.' }, 400, cors);
 
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -198,6 +198,7 @@ const field=r=>r.expertise==='Other'&&r.expertise_other?'Other: '+r.expertise_ot
 async function load(){
   const res=await fetch('/admin/api/signups');if(res.status===401){location.reload();return}
   all=(await res.json()).signups;
+  all.forEach(r=>{r.expertise=r.expertise||'Not given'});
   const fields=[...new Set(all.map(r=>r.expertise))].sort();
   $('fx').replaceChildren(el('option',{value:'',textContent:'All fields'}),...fields.map(f=>el('option',{value:f,textContent:f})));
   render();
@@ -205,7 +206,7 @@ async function load(){
 function render(){
   const q=$('q').value.toLowerCase(),fx=$('fx').value,fs=$('fs').value;
   const now=Date.now(),week=all.filter(r=>now-new Date(r.created_at.replace(' ','T')+'Z')<7*864e5).length;
-  $('stats').replaceChildren(...[[all.length,'total sign-ups'],[week,'in the last 7 days'],[new Set(all.map(r=>r.affiliation.toLowerCase())).size,'distinct affiliations'],[all.filter(r=>r.status==='new').length,'not yet contacted']].map(([n,l])=>el('div',{className:'stat'},el('b',{textContent:n}),el('span',{textContent:l}))));
+  $('stats').replaceChildren(...[[all.length,'total sign-ups'],[week,'in the last 7 days'],[new Set(all.filter(r=>r.affiliation).map(r=>r.affiliation.toLowerCase())).size,'distinct affiliations'],[all.filter(r=>r.status==='new').length,'not yet contacted']].map(([n,l])=>el('div',{className:'stat'},el('b',{textContent:n}),el('span',{textContent:l}))));
   const counts={};all.forEach(r=>counts[r.expertise]=(counts[r.expertise]||0)+1);
   const max=Math.max(1,...Object.values(counts));
   $('bars').replaceChildren(el('h2',{textContent:'Sign-ups by field'}),...Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{const i=el('i');i.style.width=(v/max*100)+'%';return el('div',{className:'bar'},el('span',{textContent:k}),el('div',{},i),el('span',{textContent:v}))}));
@@ -219,7 +220,7 @@ function render(){
     const save=async()=>{await fetch('/admin/api/signups/'+r.id,{method:'PATCH',headers:H,body:JSON.stringify({status:st.value,notes:nt.value})});r.status=st.value;r.notes=nt.value};
     st.onchange=async()=>{await save();render()};nt.onchange=save;
     const del=el('button',{className:'btn sm danger',textContent:'Delete',onclick:async()=>{if(!confirm('Delete '+r.name+' ('+r.email+')? This cannot be undone.'))return;await fetch('/admin/api/signups/'+r.id,{method:'DELETE',headers:H});all=all.filter(x=>x.id!==r.id);render()}});
-    return el('tr',{},el('td',{className:'n',textContent:r.created_at.slice(0,16)}),el('td',{textContent:r.name}),el('td',{},el('a',{href:'mailto:'+r.email,textContent:r.email})),el('td',{textContent:r.affiliation}),el('td',{textContent:field(r)}),el('td',{},st),el('td',{},nt),el('td',{},del));
+    return el('tr',{},el('td',{className:'n',textContent:r.created_at.slice(0,16)}),el('td',{textContent:r.name}),el('td',{},el('a',{href:'mailto:'+r.email,textContent:r.email})),el('td',{textContent:r.affiliation||'—'}),el('td',{textContent:field(r)}),el('td',{},st),el('td',{},nt),el('td',{},del));
   }));
 }
 document.querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{sortDir=sortK===th.dataset.k?-sortDir:1;sortK=th.dataset.k;render()});
